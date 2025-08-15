@@ -1,0 +1,15 @@
+{
+  "version": "0.1.0",
+  "description": "Not fight club",
+  "private": true,
+  "name": "not-fight-club",
+  "scripts": {
+    "start": "rss-scripts start",
+    "build": "rss-scripts build",
+    "predeploy": "rss-scripts build",
+    "deploy": "gh-pages -d dist -e not-fight-club"
+  },
+  "devDependencies": {
+    "rss-scripts": "^0.2.4"
+  }
+}
