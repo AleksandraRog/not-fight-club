@@ -1,11 +1,6 @@
 import SettingRepository from "./SettingRepsitory"
 import * as mapper from "../character/player-mapper"
 
-
-// const fs = require('fs');
-// const path = require('path');
-// const imgPath = './assets/avatars/';
-
 export class SettingRepositoryImpl extends SettingRepository {
     constructor(storageClient /** @type {LocalStorageClient} */) {
         super();
@@ -29,4 +24,4 @@ export class SettingRepositoryImpl extends SettingRepository {
 
 } 
 
-const localStorageParametrName = 'player';
+export const localStorageParametrName = 'player';

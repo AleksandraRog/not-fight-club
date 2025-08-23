@@ -1,16 +1,24 @@
 import { Fragment } from "../common/Fragment";
-import { fromEvent } from "rxjs";
+import { fromEvent, merge } from "rxjs";
 import { map } from "rxjs/operators";
 
 
 export class StartFragment extends Fragment {
-    constructor(fragmentState){
+    constructor(fragmentState, model){
         super(fragmentState);
         this.characterName = '';
+        this.model = model;
+        
 
         this.intent$.subscribe(intent => {
-            if (intent.type === 'TEXT_CHANG') {
+            console.log('что-то происходит', intent);
+            if (intent.type === 'TEXT_CHANGE') {
+                console.log('text change');
                 this.characterName = intent.value;
+            }
+            if (intent.type === 'SAVE') {
+                console.log('save data');
+                this.model.reduce(intent);
             }
         });
     }
@@ -25,10 +33,7 @@ export class StartFragment extends Fragment {
     characterNameInput.type = 'text';
     characterNameInput.value = this.characterName;
     labelCharacterNameInput.appendChild(characterNameInput);
-
-    this.subscribe(
-        fromEvent(characterNameInput, 'input').pipe(map((e) => ({type: 'TEXT_CHANGE', value: e.target.value})))
-    );
+    const textChangeIntent$ = fromEvent(characterNameInput, 'input').pipe(map((e) => ({type: 'TEXT_CHANGE', value: e.target.value})));
 
     const button = document.createElement("button");
     button.textContent = "Create character!";
@@ -37,9 +42,10 @@ export class StartFragment extends Fragment {
     fragment.appendChild(labelCharacterNameInput);
     fragment.appendChild(button);
 
-   
+    const navIntent$ = fromEvent(button, 'click').pipe(map(() => ({type: 'NAVIGATE', type2: 'MAIN_SCREEN_GO', path: '/main'})));
+    const saveIntent$ = fromEvent(button, 'click').pipe(map(() => ({type: 'SAVE', characterName: this.characterName})));    
     this.subscribe(
-      fromEvent(button, "click").pipe(map(() => ({ type: 'NAVIGATE', type2: "MAIN_SCREEN_GO", path: '/main' })))
+      merge(textChangeIntent$, saveIntent$, navIntent$)
     );
 
     return fragment;
