@@ -1,4 +1,6 @@
-import image from './images/lazy.png';
+
+import { di } from './common/di.js'
+import { NavigationRouter } from './common/NavigationRouter';
 
 const createImage = (src) => new Promise((res, rej) => {
   const img = new Image();
@@ -7,12 +9,9 @@ const createImage = (src) => new Promise((res, rej) => {
   img.src = src;
 });
 
-async function render() {
-  const subHeader = document.createElement('h2');
-  subHeader.innerHTML = 'This elements was created by js';
-  const myImage = await createImage(image);
-  document.body.appendChild(subHeader);
-  document.body.appendChild(myImage);
-}
+const rootContainer = document.querySelector('main');
 
-render();
+const router = new NavigationRouter(rootContainer, di);
+
+router.init();
+

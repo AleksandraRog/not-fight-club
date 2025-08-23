@@ -9,9 +9,36 @@ body {
   background-color: #363636;
 }
 
+.hidden { display: none; }
+
+
 h1 { color: #e6c300; }
 
 img {
   width: 90vw;
   max-width: 256px;
+}
+
+header {
+  display: flex;
+  align-content: space-between;
+  border-bottom: 3px solid blue;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
+
+footer {
+  border-top: 3px solid blue;
+}
+
+.character-wins {
+  color: green;
+}
+
+.character-loses {
+  color: red;
 }
