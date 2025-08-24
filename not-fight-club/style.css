@@ -33,7 +33,14 @@ header {
   display: flex;
   flex-direction: row;
   gap: 30px;
+  direction: none;
 }
+
+li {
+  list-style: none;
+}
+
+
 
 footer {
   border-top: 3px solid blue;
