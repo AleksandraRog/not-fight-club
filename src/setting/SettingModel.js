@@ -1,69 +1,30 @@
+import { Model } from "../common/Model";
 
 
-export class SettingModel {
-    constructor(settingRepository /** @type {SettingRepository} */) {
-        this.repository = settingRepository;
+export class SettingModel extends Model{
+    constructor(repository, storageRepository){
+        super(repository, storageRepository);
+        this.player = null;
         this.state = this.createDefaultSettingState();
     }
+    
+    reduce(intent) {
+        this.player.name = intent.characterName;
+        console.log('reduce sett', this.player);
+        this.repository.savePlayer(this.player);
+    } 
 
-    async init() {
-        this.updateScreen({ type: "LOAD_INITIAL" });
+    async loadPlayer() {
+        const player = await this.repository.getPlayer();
+        this.player = player;
+        return player;
     }
 
-    async loadCharacterName() {
-        try {
-            this.state = { ...this.state, isLoading: true };
-            const name = await this.repository.fetchCharacterName(); 
-            this.state = { ...this.state, isLoading: false, characterName: name, isSave: true };
-        } catch (e) {
-            this.state = { ...this.state, isLoading: false, error: e.message };
-        }
-        return this.state;
-    }
-
-    async saveCharacterName(name) {
-        try {
-            await this.repository.saveCharacterName(name);
-            this.state = { ...this.state, characterName: name, isSave: true };
-        } catch (e) {
-            this.state = { ...this.state, error: e.message };
-        }
-        return this.state;
-    }
+    
 
     toggleEdit() {
         this.state = { ...this.state, isSave: !this.state.isSave };
         return this.state;
-    }
-
-    async reduce(action) {
-        switch (action.type) {
-        case "INIT":
-            this.state = { ...this.state, isLoading: true };
-            try {
-            const name = await this.repository.fetchCharacterName();
-            this.state = { ...this.state, isLoading: false, characterName: name, isSave: true };
-            } catch (e) {
-            this.state = { ...this.state, isLoading: false, error: e.message };
-            }
-            return this.state;
-
-        case "TOGGLE_EDIT":
-            this.state = { ...this.state, isSave: !this.state.isSave };
-            return this.state;
-
-        case "SAVE_NAME":
-            try {
-            await this.repository.saveCharacterName(action.payload);
-            this.state = { ...this.state, characterName: action.payload, isSave: true };
-            } catch (e) {
-            this.state = { ...this.state, error: e.message };
-            }
-            return this.state;
-
-        default:
-            return this.state;
-        }
     }
 
     createDefaultSettingState(){
@@ -74,4 +35,20 @@ export class SettingModel {
             error: null
         };
     }
+
+    restoreState() {
+
+    const savedState = this.storageRepository.getItem('rootState', true);
+    if (savedState) {
+      this.state = savedState;
+    }
+  }
+
+  saveState(){
+    this.storageRepository.setItem('rootState', this.state, true); 
+  }
+
+  clearState() {
+    this.storageRepository.removeItem('rootState', true);
+  }
 }

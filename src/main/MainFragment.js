@@ -16,7 +16,7 @@ export class MainFragment extends Fragment {
         fragment.appendChild(container);
         
         this.subscribe(
-          fromEvent(fightButton, "click").pipe(map(() => ({ type: 'NAVIGATE', type2: "BATTLE_SCREEN_GO", path: '/battle' })))
+          fromEvent(fightButton, "click").pipe(map(() => ({ type: 'NAVIGATE', path: '/battle' })))
         );
 
         return fragment;

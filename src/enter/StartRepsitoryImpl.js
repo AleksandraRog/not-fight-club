@@ -10,6 +10,6 @@ export class StartRepositoryImpl extends StartRepository{
     }
 
     saveCharacter(character){
-        this.apiClaent.setItem(new mapper.playerToDto(character), localStorageParametrName);
+        this.apiClaent.setItem(localStorageParametrName,  new mapper.playerToDto(character));
     }
 }

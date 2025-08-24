@@ -1,35 +1,46 @@
 import { fromEvent, merge, EMPTY, Subject } from "rxjs";
 import { map } from "rxjs/operators";
+import { Model } from "../common/Model";
 
-export class RootModel {
+export class RootModel extends Model{
 
-    constructor() {
+    constructor(repository, storageRepository) {
+      super(repository, storageRepository);
       this.state = this.createScreenState();
       this.intent$ = new Subject();
       this.bindRootIntent(document.querySelector('body'));
     }
 
     init() {
-      this.state = {
-          ...this.state,
-          screen: 'ENTER',   
-          isLoading: false,
-          name: 'Welcome',
-          withHeader: false,
-         withFooter: false,
-      };
-
-      this.render(this.state);
+      const firstEnter = location.hash === "" || location.hash === "#/";
+  
+      if (firstEnter) {
+        this.clearState();
+      } else {
+        this.restoreState();
+      }
 
       this.intent$.subscribe(action => {
-        this.updateScreen(action); // здесь обновляется стейт и рендер
+        if (action.type.startsWith("NAVIGATE")) {
+          console.log('init подписка отработала', action);
+          this.updateScreen(action); 
+          this.saveState();
+        }
       });
 
+      const currentPath = location.hash.replace("#", "");
+      console.log('currentPath', currentPath);
+      if (!currentPath) {
+        this.intent$.next({ type: 'NAVIGATE', path: '/' });
+      } else {
+        this.intent$.next({ type: 'NAVIGATE', path: currentPath });
+      }
     }
 
     async updateScreen(action) {
-      switch (action.type2) {
-        case "LOAD_INITIAL":
+
+      switch (action.path) {
+        case "/":
           try {
             this.state.isLoading = true;
             const initial = 'ENTER';
@@ -39,27 +50,29 @@ export class RootModel {
           }
           break;
 
-        case "MAIN_SCREEN_GO":
+        case "/main":
           console.log('intent in root', this.intent$);
           this.state = { ...this.state, name: 'Main', withHeader: true, withFooter: false, fragment: 'mainFragment' };
           break;
 
-        case "BATTLE_SCREEN_GO":
+        case "/battle":
           this.state = { ...this.state, name: 'Battle', withHeader: true, withFooter: true, fragment: 'battleFragment' };
           break;  
 
-        case "SETTING_SCREEN_GO":
+        case "/setting":
           this.state = { ...this.state, name: 'Setting', withHeader: true, withFooter: false, fragment: 'settingFragment' };
           if (this.currentFragment) this.currentFragment.unmount();
           break;
         
           
-        case "CHARACTER_SCREEN_GO":
+        case "/character":
           this.state = { ...this.state, name: 'Character', withHeader: true, withFooter: false, fragment: 'characterFragment' };
           break;  
       }
+
       console.log('state up scree', this.state);
       this.render(this.state);
+      this.saveState();
     }
 
   createScreenState() {
@@ -74,20 +87,19 @@ export class RootModel {
       }
   }
 
-    bindRootIntent(dom) {
-      console.log(`bindIntent modelState `, this.modelState)  
-      const streams = [];
+  bindRootIntent(dom) {
+    console.log(`bindIntent modelState `, this.modelState)  
+    const streams = [];
   
-      const mainBtn = dom.querySelector(".main-button");
-      if (mainBtn) streams.push(fromEvent(mainBtn, "click").pipe(map(() => ({ type: 'NAVIGATE', type2: "MAIN_SCREEN_GO", path: '/main' }))));
+    const mainBtn = dom.querySelector(".main-button");
+    if (mainBtn) streams.push(fromEvent(mainBtn, "click").pipe(map(() => ({ type: 'NAVIGATE', path: '/main' }))));
   
-      const settingBtn = dom.querySelector(".setting-button");
-      if (settingBtn) streams.push(fromEvent(settingBtn, "click").pipe(map(() => ({ type: 'NAVIGATE', type2: "SETTING_SCREEN_GO", path: '/setting' }))));
+    const settingBtn = dom.querySelector(".setting-button");
+    if (settingBtn) streams.push(fromEvent(settingBtn, "click").pipe(map(() => ({ type: 'NAVIGATE', path: '/setting' }))));
   
-      const characterBtn = dom.querySelector(".character-button");
-      if (characterBtn) streams.push(fromEvent(characterBtn, "click").pipe(map(() => ({ type: 'NAVIGATE', type2: "CHARACTER_SCREEN_GO", path: '/character' }))));
+    const characterBtn = dom.querySelector(".character-button");
+    if (characterBtn) streams.push(fromEvent(characterBtn, "click").pipe(map(() => ({ type: 'NAVIGATE', path: '/character' }))));
     
-    //return streams.length > 0 ? merge(...streams) : EMPTY;
     if (streams.length > 0) {
       merge(...streams).subscribe(action => this.intent$.next(action)); 
     }
@@ -102,5 +114,21 @@ export class RootModel {
 
     const headerTitle = header.querySelector('.screen-name');
     headerTitle.textContent = state.name;
+  }
+
+  restoreState() {
+
+    const savedState = this.storageRepository.getItem('rootState', true);
+    if (savedState) {
+      this.state = savedState;
+    }
+  }
+
+  saveState(){
+    this.storageRepository.setItem('rootState', this.state, true); 
+  }
+
+  clearState() {
+    this.storageRepository.removeItem('rootState', true);
   }
 }

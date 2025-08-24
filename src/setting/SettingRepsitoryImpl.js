@@ -2,17 +2,18 @@ import SettingRepository from "./SettingRepsitory"
 import * as mapper from "../character/player-mapper"
 
 export class SettingRepositoryImpl extends SettingRepository {
-    constructor(storageClient /** @type {LocalStorageClient} */) {
+    constructor(apiClient) {
         super();
-        this.storage = storageClient;
+        this.apiClient = apiClient;
     }
-     
-    getPlayer() {
-        return mapper.dtoToPlayer(storage.getItem(localStorageParametrName));
+    
+    async getPlayer() {
+        const dtoPlayer = await this.apiClient.getItem(localStorageParametrName);     
+        return new mapper.dtoToPlayer(dtoPlayer);
     }
 
     savePlayer(player) {
-        this.storage.setItem(mapper.playerToDto(player), localStorageParametrName);
+        this.apiClient.setItem(localStorageParametrName, new mapper.playerToDto(player));
     }
 
     async getAvatarList() {

@@ -1,8 +1,11 @@
+
+
 class SettingRepository {
-    getPlayer() {
+    
+    async getPlayer(){
         throw new Error("Not implemented");
     }
-
+    
     savePlayer(player) {
         throw new Error("Not implemented");
     }

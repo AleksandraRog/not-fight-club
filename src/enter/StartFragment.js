@@ -5,11 +5,9 @@ import { map } from "rxjs/operators";
 
 export class StartFragment extends Fragment {
     constructor(fragmentState, model){
-        super(fragmentState);
+        super(fragmentState, model);
         this.characterName = '';
-        this.model = model;
         
-
         this.intent$.subscribe(intent => {
             console.log('что-то происходит', intent);
             if (intent.type === 'TEXT_CHANGE') {

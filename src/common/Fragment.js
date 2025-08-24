@@ -2,7 +2,8 @@ import { Subject } from "rxjs";
 
 
 export class Fragment {
-    constructor(fragmentState) {
+    constructor(fragmentState, model) {
+    this.model = model;  
     this.fragmentState = fragmentState;
     this.container = null;
     this.subscriptions = [];

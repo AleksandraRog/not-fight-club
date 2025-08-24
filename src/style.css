@@ -1,12 +1,16 @@
+:root {
+  --bg-dark: #030303;
+  --color-for-bg-dark: white;
+  --dark-red: #710707;
+  --font-gold: #9d8665;
+}
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: white;
-  text-transform: uppercase;
-  background-color: #363636;
+
 }
 
 .hidden { display: none; }
@@ -15,7 +19,7 @@ body {
 h1 { color: #e6c300; }
 
 img {
-  width: 90vw;
+  width: 25vw;
   max-width: 256px;
 }
 
@@ -42,3 +46,52 @@ footer {
 .character-loses {
   color: red;
 }
+
+.character-name {
+  text-decoration: underline;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  flex: 1;
+}
+
+.checkbox-container.attack {
+  border-right: 3px solid red;
+  text-align: end;
+}
+
+/* .checkbox-container.defence {
+
+} */
+
+
+.disposition-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-form {
+  display: flex;
+}
+
+.main-container {
+  display: flex;
+}
+
+.disposition-container span {
+  text-align: center;
+}
+
+.score-line {
+  width: 100%;
+  height: 16px;
+  background: linear-gradient(to right, var(--dark-red), var(--dark-red) 43%, #C4C4C4 43%, #C4C4C4 100%);
+  transition: background 450ms ease-in;
+}
+
+
+
+

@@ -1,4 +1,4 @@
-import { RootModel } from "../root/RootModel";
+
 
 export class NavigationRouter {
     constructor(container, di) {
@@ -6,15 +6,15 @@ export class NavigationRouter {
     this.di = di;
     this.currentFragment = null;
     this.fragments = {};
-    this.rootModel = new RootModel();
-
+    this.rootModel = this.di.resolve('RootModel');
+    
     window.addEventListener("hashchange", () => {
       this.navigate(location.hash.replace("#", "") || "/", false);
     });
   }
 
     async navigate(path, push = true) {
-      console.log('nav path',path);
+
       if (!this.fragments[path]) {
         const fragInstance = this.di.resolve(path);
         this.fragments[path] = fragInstance;
@@ -24,22 +24,31 @@ export class NavigationRouter {
         }
       }
 
+      if (this.currentFragment && this.currentFragment.unmount) {
+        this.currentFragment.unmount();
+      }
+
       const frag = this.fragments[path];
       this.container.innerHTML = '';
-      frag.createView().then(node => {this.container.appendChild(node);}).catch(err => console.error(err))
-    
+      this.currentFragment = frag;
+      frag.createView().then(node => {
+        this.container.appendChild(node);
+        if (frag.mount) frag.mount(); 
+      }).catch(err => console.error(err))
+      
+
       if (push) history.pushState({}, "", "#" + path);
     }
 
     init() {
       this.rootModel.intent$.subscribe(action => {
         if (action.type.startsWith("NAVIGATE")) {
-          console.log('in subs for nav', action.type, action.payload, action.type2);
+
           this.navigate(action.path);
         }
       });
+
       this.rootModel.init();
-      this.navigate(location.hash.replace("#", "") || "/", false);
     }
 
 }

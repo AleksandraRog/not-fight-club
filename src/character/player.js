@@ -1,4 +1,4 @@
-import { Hero } from "../common/hero.js";
+import { Hero } from './common/Hero';
 
 
-export class Player extends Hero {}
+export class Player extends Hero
