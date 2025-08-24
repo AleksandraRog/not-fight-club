@@ -11,19 +11,10 @@ export const zones = {
 };
 
 
-
-export function createCharacterState() {
-  return {
-    namePlayer: '',
-    avatarPlayer: '',
-    isLoading: true,
-    error: null
-  };
-}
-
-export function createSettingState() {
-  return {
-    namePlayer: ''
-  };
-}
-
+export const createImage = (src) => new Promise((res, rej) => {
+        const img = new Image();
+        img.onload = () => res(img);
+        img.onerror = rej;
+        img.src = src;
+        img.alt = 'avatar';
+    });

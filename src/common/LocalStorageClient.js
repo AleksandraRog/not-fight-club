@@ -18,7 +18,6 @@ export class LocalStorageClient {
   setItem(key, value) {
     localStorage.setItem(`${this.namespace}:${key}`, JSON.stringify(value));
     this.changePlayer$.next({ key, value });
-    console.log('local push', this.changePlayer$);
   }
 
   removeItem(key) {

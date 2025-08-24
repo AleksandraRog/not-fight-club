@@ -22,14 +22,13 @@ export class RootModel extends Model{
 
       this.intent$.subscribe(action => {
         if (action.type.startsWith("NAVIGATE")) {
-          console.log('init подписка отработала', action);
           this.updateScreen(action); 
           this.saveState();
         }
       });
 
       const currentPath = location.hash.replace("#", "");
-      console.log('currentPath', currentPath);
+
       if (!currentPath) {
         this.intent$.next({ type: 'NAVIGATE', path: '/' });
       } else {
@@ -51,7 +50,6 @@ export class RootModel extends Model{
           break;
 
         case "/main":
-          console.log('intent in root', this.intent$);
           this.state = { ...this.state, name: 'Main', withHeader: true, withFooter: false, fragment: 'mainFragment' };
           break;
 
@@ -70,7 +68,6 @@ export class RootModel extends Model{
           break;  
       }
 
-      console.log('state up scree', this.state);
       this.render(this.state);
       this.saveState();
     }
@@ -88,7 +85,6 @@ export class RootModel extends Model{
   }
 
   bindRootIntent(dom) {
-    console.log(`bindIntent modelState `, this.modelState)  
     const streams = [];
   
     const mainBtn = dom.querySelector(".main-button");

@@ -1,5 +1,5 @@
 import { Fragment } from "../common/Fragment";
-import image from '../assets/images/lazy.png';
+import { createImage } from "../common/utils";
 
 
 export class CharacterFragment extends Fragment {
@@ -7,15 +7,11 @@ export class CharacterFragment extends Fragment {
         super(fragmentState, model);
         
         this.intent$.subscribe(intent => {
-            console.log('что-то происходит', intent);
+          
             if (intent.type === 'TEXT_CHANGE') {
-                console.log('text change');
                 this.characterName = intent.value;
             }
-            if (intent.type === 'SAVE') {
-                console.log('save data');
-                this.model.reduce(intent);
-            }
+            if (intent.type === 'SAVE') { this.model.reduce(intent); }
         });
     }
 
@@ -26,7 +22,7 @@ export class CharacterFragment extends Fragment {
         let container = document.createElement('div');
         container.classList.add('main-container');
 
-        const avatarImg = await this.createImage(image);
+        const avatarImg = await createImage(this.model.character$.value?.avatar || '');
 
         let nameSpan = document.createElement('span');
         nameSpan.classList.add('character-name');
@@ -59,14 +55,6 @@ export class CharacterFragment extends Fragment {
       winsSpan.textContent = `wins: ${state.wins}`;
       losesSpan.textContent = `loses: ${state.loses}`;
     }
-
-    createImage = (src) => new Promise((res, rej) => {
-        const img = new Image();
-        img.onload = () => res(img);
-        img.onerror = rej;
-        img.src = src;
-        img.alt = 'avatar';
-    });
 
     mount() {
       this.subscriptions.push(

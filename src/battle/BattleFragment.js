@@ -1,29 +1,25 @@
-import { merge } from "rxjs";
-import { di } from "../common/di";
+import { fromEvent, map, merge } from "rxjs";
 import { Fragment } from "../common/Fragment";
-import { zones } from "../common/utils";
+import { createImage, zones } from "../common/utils";
 
 
 export class BattleFragment extends Fragment {
-    constructor(fragmentState, model) {
+    constructor(fragmentState, model, player) {
         super(fragmentState, model);
-        
+        this.player = null;
+
         this.intent$.subscribe(intent => {
-            console.log('что-то происходит', intent);
             if (intent.type === 'GAME') {
-                 console.log('game');
-                 this.model.attackSession()
-        //         this.characterName = intent.value;
-        //     }
-        //     if (intent.type === 'SAVE') {
-        //         console.log('save data');
-        //         this.model.reduce(intent);
-             };
+                 this.model.attackSession();
+            };
          });
     }
 
 
     async createView() {
+        if (!this.player) {
+          this.player = await this.model.loadPlayer();
+        }
         const fragment = document.createDocumentFragment();
         let playerContainer = null, enemyContainer = null,
         dispositionContainer = null, dispositionRules = null,
@@ -36,8 +32,9 @@ export class BattleFragment extends Fragment {
         playerContainer.classList.add('player-container');
         enemyContainer = document.createElement('div');
         enemyContainer.classList.add('enemy-container');
-        playerContainer.appendChild(this.createAttendeeView({name: 'hero', url: './//', baseScore : 150}));
-        enemyContainer.appendChild(this.createAttendeeView({name: 'enemy', url: './//', baseScore : 150})) 
+        playerContainer.appendChild(await this.createAttendeeView(this.player));
+
+        enemyContainer.appendChild(await this.createAttendeeView({name: 'enemy', avatar: '../assets/images/lazy.png', health : 150})) 
         dispositionRules = document.createElement('span')
         dispositionRules.textContent = 'Please pick 2 Attack zone and 3 Defence zone';
         defenceCheckbox = document.createElement('div');
@@ -54,12 +51,12 @@ export class BattleFragment extends Fragment {
         checkboxWrapper.classList.add('checkbox-form');
         attackButton = document.createElement('button');
         attackButton.textContent = 'Attake!';
-        //attackButton.disabled = 'di'
+
         const attackIntent$ = fromEvent(attackButton, 'click')
-        .pipe(map(() => ({type: 'GAME'}))); 
+          .pipe(map(() => ({type: 'GAME'}))
+        ); 
+        
         this.subscribe(merge(attackIntent$));
-
-
 
         dispositionContainer.appendChild(dispositionRules);
         checkboxWrapper.appendChild(attackCheckbox);
@@ -75,24 +72,23 @@ export class BattleFragment extends Fragment {
 
     }
 
-    createAttendeeView(attendee){
+    async createAttendeeView(attendee){
         const fragment = document.createDocumentFragment();
         let name = null, avatar = null, scoreLine = null,
         scoreText = null, baseScore = null, currentScore = null;
         name = document.createElement('h6');
         name.textContent = attendee.name;
-        avatar = document.createElement('div')
-        avatar.textContent = attendee.url;
+        avatar = await createImage(attendee.avatar || '');
         scoreLine = document.createElement('div');
         scoreLine.classList.add('score-line');
         scoreText = document.createElement('div');
         currentScore = document.createElement('span');
         currentScore.classList.add('current-score');
-        currentScore.textContent = attendee.baseScore;
+        currentScore.textContent = attendee.health;
         scoreText.appendChild(currentScore);
         scoreText.append(' / ');
         baseScore = document.createElement('span');
-        baseScore.textContent = attendee.baseScore;
+        baseScore.textContent = attendee.health;
         scoreText.appendChild(baseScore);
         fragment.appendChild(name);
         fragment.appendChild(avatar);
@@ -104,12 +100,10 @@ export class BattleFragment extends Fragment {
 
     createCheckbox(box, hand) {
         const fragment = document.createDocumentFragment();
-        console.log(Object.values(box));
         let title = document.createElement('p');
         title.textContent = `${hand} Zones`;
         fragment.appendChild(title);
         for (const item of Object.values(box)) {
-            console.log(Object.values(box));
             const label = document.createElement('label');
             const input = document.createElement('input');
             input.type = 'checkbox';
@@ -129,6 +123,14 @@ export class BattleFragment extends Fragment {
     }
 
     updateView (state) {
+      const playerContainer = document.querySelector('.player-container'),
+      playerName = playerContainer.querySelector('h6'),
+      playerAvatar = playerContainer.querySelector('img');
+      if (playerAvatar.src !== state.avatar) playerAvatar.src = state.avatar;
+      playerName.textContent = state.name;
+    }
+
+    updateScor (state) {
       let losesSpan = document.querySelector('.character-loses'),
       winsSpan = document.querySelector('.character-wins'),
       nameSpan = document.querySelector('.character-name'); 
@@ -145,5 +147,17 @@ export class BattleFragment extends Fragment {
             logItem.textContent = state[i];
             logList.appendChild(logItem);
         }
+    }
+
+    mount() {
+      this.subscriptions.push(
+        this.model.player$.subscribe(state => this.updateView(state))
+      );
+    }
+
+    unmount() {
+      this.subscriptions.forEach(s => s.unsubscribe());
+      this.subscriptions = [];
+      this.container = null;
     }
 }

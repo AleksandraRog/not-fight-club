@@ -9,15 +9,12 @@ export class StartFragment extends Fragment {
         this.characterName = '';
         
         this.intent$.subscribe(intent => {
-            console.log('что-то происходит', intent);
-            if (intent.type === 'TEXT_CHANGE') {
-                console.log('text change');
-                this.characterName = intent.value;
-            }
-            if (intent.type === 'SAVE') {
-                console.log('save data');
-                this.model.reduce(intent);
-            }
+          if (intent.type === 'TEXT_CHANGE') {
+            this.characterName = intent.value;
+          }
+          if (intent.type === 'SAVE') {
+            this.model.reduce(intent);
+          }
         });
     }
 

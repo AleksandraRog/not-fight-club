@@ -1,18 +1,15 @@
-class Battle {
-    constructor(player, antyPlayer, battleLog = []) {
+const { Hero } = require("../common/HeroClass");
+const { Player } = require("../common/Player");
+
+export class Battle {
+    constructor(player = new Player(), antyPlayer = new Hero, battleLog = []) {
         this.player = player;
         this.antyPlayer = antyPlayer;
-        this.battleLog = battleLog;
         this.playerScor = player.health,
         this.antyPlayerScor = antyPlayer.health;
-        this.playerAttakeZoneCount = 0;
-        this.playerDefenceZoneCount = 0;
-        this.
-        this.battleLog =[];
+        this.playerAttakeZoneCount = player.attCount;
+        this.playerDefenceZoneCount = player.defCount;
+        this.battleLog = battleLog;
     };
  
-    attake(){
-        
-    }; 
-
 } 

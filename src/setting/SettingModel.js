@@ -10,7 +10,6 @@ export class SettingModel extends Model{
     
     reduce(intent) {
         this.player.name = intent.characterName;
-        console.log('reduce sett', this.player);
         this.repository.savePlayer(this.player);
     } 
 

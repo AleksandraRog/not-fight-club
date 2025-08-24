@@ -10,13 +10,10 @@ export class SettingFragment extends Fragment {
         this.player = null;
         
         this.intent$.subscribe(intent => {
-            console.log('что-то происходит', intent);
             if (intent.type === 'TEXT_CHANGE') {
-                console.log('setting text change');
                 this.player.name = intent.value;
             }
             if (intent.type === 'SAVE') {
-                console.log('setting save data');
                 this.model.reduce(intent);
 
                 this.fragmentState = {... this.fragmentState, isSave: !this.fragmentState.isSave }

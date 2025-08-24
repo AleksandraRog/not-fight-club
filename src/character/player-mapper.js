@@ -1,5 +1,5 @@
 import * as util from "../common/utils";
-import { Player } from "./player";
+import { Player } from "../common/Player";
 import { PlayerDto } from "./player-dto";
 
 

@@ -1,4 +1,4 @@
-import { Player } from "../character/player";
+import { Player } from "../common/Player";
 import { Model } from "../common/Model";
 
 
