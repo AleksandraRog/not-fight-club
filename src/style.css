@@ -10,17 +10,12 @@
 }
 
 body {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  /* align-items: center; */
-  /* justify-content: center; */
 
 }
-
-.hidden { display: none; }
-
 
 h1 { color: #e6c300; }
 
@@ -133,5 +128,14 @@ footer {
   opacity: 0;
 }
 
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fade-in.show {
+  opacity: 1;
+}
 
 

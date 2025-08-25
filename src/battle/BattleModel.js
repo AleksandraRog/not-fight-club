@@ -8,7 +8,7 @@ export class BattleModel extends Model{
         super(repository, storageRepository);
         this.battleInteractor = battleInteractor;
         this.player = null;
-        this.battle = new Battle;
+        this.battle = new Battle();
         this.battle.enemy = this.createEnemy();
         this.player$ = new BehaviorSubject(null);
         this.battle$ = new Subject();
@@ -57,8 +57,7 @@ export class BattleModel extends Model{
     }
 
     async updateTypePlayerAttack(){
-      const playerDis = //await 
-      this.battleInteractor.updateTypeAttack(this.battle.playerDisposition)
+      const playerDis = await this.battleInteractor.updateTypeAttack(this.battle.playerDisposition)
       this.battle.playerDisposition = playerDis;
     }
 
@@ -98,6 +97,14 @@ export class BattleModel extends Model{
     savePlayerResult(intent){
       intent.result > 0 ? this.player.wins += Math.abs(intent.result) : this.player.loses += Math.abs(intent.result);
       this.repository.saveBattleResalt(this.player);
+      this.resetBattle();
+
+    }
+
+    resetBattle(){
+      this.battle = new Battle();
+      this.battle.player = this.player;
+      this.battle.enemy = this.createEnemy();
     }
 
 

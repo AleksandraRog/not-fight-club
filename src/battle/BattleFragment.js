@@ -26,10 +26,11 @@ export class BattleFragment extends Fragment {
 
 
     async createView() {
+      document.querySelector('footer').classList.remove('show');
         if (!this.player) {
           this.player = await this.model.loadPlayer();
         }
-        console.log('проверки созд вью');
+        
         const fragment = document.createDocumentFragment();
         let playerContainer = null, enemyContainer = null,
         dispositionContainer = null, dispositionRules = null,
@@ -88,6 +89,7 @@ export class BattleFragment extends Fragment {
         container.appendChild(dispositionContainer);
         container.appendChild(enemyContainer);
         fragment.appendChild(container);        
+        document.querySelector('footer').classList.add('show');
         return fragment;
 
     }
@@ -153,7 +155,7 @@ export class BattleFragment extends Fragment {
     }
 
     updateScore (attendee, state) {
-      console.log('проверки обн прог');
+  
       const container = document.querySelector(`.${attendee.player ? 'player-container' : 'enemy-container'}`);   
       const score = attendee.player ? state.playerScore : state.enemyScore;
       const percent = Math.floor( score / attendee.health * 100);
@@ -176,9 +178,10 @@ export class BattleFragment extends Fragment {
     }
 
     updateLogs (state) {
-        console.log('проверки обн лог');
+      
         this.logList = document.querySelector('.log-list');
         const logCount = this.logList.querySelectorAll('li').length;
+
         for( let i = logCount; i < state.length; i += 1) {
             let logItem = document.createElement('li');
             logItem.innerHTML = state[i].replace(this.model.player.name, `<strong>${this.model.player.name}</strong>`).replace(this.model.battle.enemy.name, `<strong>${this.model.battle.enemy.name}</strong>`);
@@ -208,13 +211,15 @@ export class BattleFragment extends Fragment {
     
 
     mount() {
+
+     
+
       this.subscriptions.push(
         this.model.player$.subscribe(state => this.updateView(state))
       );
 
       this.subscriptions.push(
         this.model.battle$.subscribe(state => {
-          console.log('проверка остатков подписки')
           this.updateScore(state.player, state);
           this.updateScore(state.enemy, state); 
           this.updateButtonState(state);
@@ -227,7 +232,6 @@ export class BattleFragment extends Fragment {
     unmount() {
       this.subscriptions.forEach(s => s.unsubscribe());
       this.subscriptions = [];
-      this.container = null;
-      this.logList = null;
+      if(this.model.battle.battleLog.length === 0) this.logList.innerHTML = '';
     }
 }

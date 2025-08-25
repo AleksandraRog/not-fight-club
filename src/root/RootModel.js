@@ -103,10 +103,12 @@ export class RootModel extends Model{
 
   render(state) {
     const footer = document.querySelector("footer");
-    footer.classList.toggle("hidden", !this.state.withFooter);
+    footer.classList.add('fade-in');
+    footer.classList.toggle('show', this.state.withFooter);
 
     const header = document.querySelector("header");
-    header.classList.toggle("hidden", !this.state.withHeader);
+    header.classList.add('fade-in');
+    header.classList.toggle('show', this.state.withHeader);
 
     const headerTitle = header.querySelector('.screen-name');
     headerTitle.textContent = state.name;
