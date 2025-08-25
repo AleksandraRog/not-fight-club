@@ -99,6 +99,7 @@ footer {
   justify-content: center;
   text-align: center;
   flex: 1;
+  position: relative;
 }
 
 .disposition-container span {
@@ -112,6 +113,25 @@ footer {
   transition: background 450ms ease-in;
 }
 
+.finish-message {
+  width: 30%;
+  aspect-ratio: 4/3;
+  opacity: 1;
+  position: absolute;
+  z-index: 999;
+  transition: opacity 20.5s;
+  background: #e8e3e3;
+  top: 50%;
+  left: 35%;
+  border-radius: 10px;
+  border: 2px solid rosybrown;
+  text-align: center;
+  align-content: center;
+}
+
+.finish-message .show {
+  opacity: 0;
+}
 
 
 
