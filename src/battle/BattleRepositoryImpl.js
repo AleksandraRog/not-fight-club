@@ -21,6 +21,8 @@ export class BattleRepositoryImpl extends BattleRepository {
        return new mapper.dtoToPlayer(dtoPlayer); 
     }
 
-    saveBattleResalt(){}
+    saveBattleResalt(player){
+      this.apiClient.setItem(localStorageParametrName, new mapper.playerToDto(player));
+    }
     
 }

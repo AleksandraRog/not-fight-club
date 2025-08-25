@@ -10,6 +10,13 @@ export const zones = {
     LEGS:{id: 5, name: 'Legs'}
 };
 
+export const enemies = {
+    1:{name: 'Knight', attCount: 1, defCount: 3},
+    2:{name: 'Warrior', attCount: 1, defCount: 2},
+    3:{name: 'Warrior 2', attCount: 2, defCount: 1},
+    4:{name: 'Warrior 3', attCount: 2, defCount: 2},
+}
+
 
 export const createImage = (src) => new Promise((res, rej) => {
         const img = new Image();

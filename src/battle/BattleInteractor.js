@@ -1,22 +1,37 @@
 import { Hero } from "../common/HeroClass";
-import { healthStep, zones } from "../common/utils";
-import { Disposition } from "./DIsposition";
+import { enemies, healthStep, zones } from "../common/utils";
+import { Disposition } from "./Disposition";
 
 
 export class BattleInteractor{
 
     createEnemy () {
-        return new Hero();
+        let i = Math.floor(Math.random() * (Object.values(enemies).length + 1)); 
+        const enemy = Object.assign(new Hero(), enemies[i])
+        enemy.avatar = `./assets/avatars/avatar${i+4}.jpg`
+        return enemy;
     }
 
-    getEnemyDisposition() {
-        return Array();
+    createEnemyDisposition(attendee){
+        const attackList = new Set();
+        let num;
+        do {
+           num = Math.floor(Math.random() * Object.values(zones).length) + 1;
+           attackList.add(Object.keys(zones).find(k => zones[k].id === num));
+        } while (attackList.size < attendee.attCount);
+ 
+        const defenceList = new Set();
+        do {
+            num = Math.floor(Math.random() * Object.values(zones).length) + 1;
+            defenceList.add(Object.keys(zones).find(k => zones[k].id === num));
+        } while (defenceList.size < attendee.defenceList);
+        const disp = this.updateTypeAttack(new Disposition([... attackList], [... defenceList]));
+        return disp;
     }
 
     attackSession(playerDisposition, enemyDisposition) {
-        const plDis = new Disposition(['LEGS', 'BODY', 'BELLY'], ['BODY'], ['BELLY']);
-        const enDis = new Disposition(['BELLY', 'LEGS'], ['LEGS', 'HEAD'], []);
-        
+        const plDis = playerDisposition;
+        const enDis = enemyDisposition;
         const stText = (zone) => `** attacked && to ${zones[zone].name} `;
         const winText = (health) => `and deal ${health} damage.`;
         const noneText = (zone) => `bat && was able to protected his ${zones[zone].name}`; 
@@ -28,7 +43,7 @@ export class BattleInteractor{
             }, {log:[], damage:0 });
 
         if (plDis.superAttackZoneList.length > 0) pLog = plDis.superAttackZoneList.reduce((rezult, zone) => {
-              rezult.log.push(stText(zone) + winText(healthStep * 1.5));
+              rezult.log.push(stText(zone).replace('attacked', 'criticaly attacked') + winText(healthStep * 1.5));
               rezult.damage = rezult.damage + healthStep * 1.5;
               return rezult;
             }, pLog);
@@ -41,12 +56,23 @@ export class BattleInteractor{
             }, {log:[], damage:0 });
 
         if (enDis.superAttackZoneList.length > 0) enLog = enDis.superAttackZoneList.reduce((rezult, zone) => {
-              rezult.log.push(stText(zone) + winText(healthStep * 1.5));
+              rezult.log.push(stText(zone).replace('attacked', 'criticaly attacked') + winText(healthStep * 1.5));
               rezult.damage = rezult.damage + healthStep * 1.5;
               return rezult;
             }, enLog);
 
         return { player:pLog, enemy:enLog } ;
+    }
+
+    updateTypeAttack(disposition) {
+        
+        let j = Math.floor(Math.random() * 50) + 1; 
+        let newDis = disposition;
+        if(newDis.attackZoneList.length > 0 && j === 1) {
+            newDis.superAttackZoneList.push(newDis.attackZoneList.slice(-1));
+            newDis.attackZoneList.pop();
+        }
+        return  newDis;
     }
 
 

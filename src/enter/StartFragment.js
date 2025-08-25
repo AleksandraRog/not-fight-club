@@ -37,7 +37,7 @@ export class StartFragment extends Fragment {
     fragment.appendChild(labelCharacterNameInput);
     fragment.appendChild(button);
 
-    const navIntent$ = fromEvent(button, 'click').pipe(map(() => ({type: 'NAVIGATE', type2: 'MAIN_SCREEN_GO', path: '/main'})));
+    const navIntent$ = fromEvent(button, 'click').pipe(map(() => ({type: 'NAVIGATE', path: '/main'})));
     const saveIntent$ = fromEvent(button, 'click').pipe(map(() => ({type: 'SAVE', characterName: this.characterName})));    
     this.subscribe(
       merge(textChangeIntent$, saveIntent$, navIntent$)

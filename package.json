@@ -10,6 +10,7 @@
     "deploy": "gh-pages -d dist -e not-fight-club"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "rss-scripts": "^0.2.4"
   },
   "dependencies": {
