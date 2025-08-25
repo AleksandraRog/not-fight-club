@@ -4,12 +4,18 @@
   --dark-red: #710707;
   --font-gold: #9d8665;
 }
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  margin: 0 auto;
+  /* align-items: center; */
+  /* justify-content: center; */
 
 }
 
@@ -21,12 +27,14 @@ h1 { color: #e6c300; }
 img {
   width: 25vw;
   max-width: 256px;
+  border-radius: 2px;
 }
 
 header {
   display: flex;
   align-content: space-between;
   border-bottom: 3px solid blue;
+  justify-content: space-between;
 }
 
 .nav-list {
@@ -70,9 +78,9 @@ footer {
   text-align: end;
 }
 
-/* .checkbox-container.defence {
-
-} */
+.checkbox-container.defence {
+  text-align: start;
+}
 
 
 .disposition-container {
@@ -86,6 +94,11 @@ footer {
 
 .main-container {
   display: flex;
+  margin: auto;
+  height: 100%;
+  justify-content: center;
+  text-align: center;
+  flex: 1;
 }
 
 .disposition-container span {
