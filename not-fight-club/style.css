@@ -7,6 +7,7 @@
 
 * {
   box-sizing: border-box;
+  gap: 20px;
 }
 
 body {
@@ -17,12 +18,18 @@ body {
 
 }
 
+.hidden {
+  display: none;
+}
+
 h1 { color: #e6c300; }
 
 img {
   width: 25vw;
+  aspect-ratio: 1 / 1.2 ;
   max-width: 256px;
-  border-radius: 2px;
+  border-radius: 10px;
+  border: 2px solid black;
 }
 
 header {
@@ -30,6 +37,22 @@ header {
   align-content: space-between;
   border-bottom: 3px solid blue;
   justify-content: space-between;
+}
+
+main {
+  display: flex;
+  text-align: center;
+  flex: 1;
+  align-content: center;
+  justify-content: center;
+}
+
+button {
+  width: fit-content;
+  height: fit-content;
+  padding: 8px 16px;
+  display: inline-flex;
+  margin: auto;
 }
 
 .nav-list {
@@ -89,12 +112,36 @@ footer {
 
 .main-container {
   display: flex;
-  margin: auto;
   height: 100%;
   justify-content: center;
   text-align: center;
+  gap: 20px;
   flex: 1;
   position: relative;
+}
+
+.main-container .battle {
+  justify-content: space-between;
+}
+
+.start-container {
+  flex-direction: column;
+}
+
+.setting-container {
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+}
+
+.setting-container button {
+  margin: 0;
+}
+
+.setting-container label {
+ display: inline-block;
+ justify-content: center;
+ margin: auto 0;
 }
 
 .disposition-container span {
