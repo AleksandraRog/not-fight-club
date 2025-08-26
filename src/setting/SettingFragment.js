@@ -35,6 +35,8 @@ export class SettingFragment extends Fragment {
       const fragment = document.createDocumentFragment();
       const container = document.createElement('div');
       container.classList.add('main-container');
+      container.classList.add('setting-container');
+      
       label = document.createElement('label');
       label.textContent = 'Player Name:';
       nameSpan = document.createElement('span');

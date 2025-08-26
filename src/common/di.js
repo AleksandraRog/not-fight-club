@@ -36,7 +36,7 @@ di.register(BattleRepository, new BattleRepositoryImpl(di.resolve(LocalStorageCl
 
 di.register(SettingModel, new SettingModel(di.resolve(SettingRepository), di.resolve(StorageRepository)));
 di.register(StartModel, new StartModel(di.resolve(StartRepository)));
-di.register(CharacterModel, new CharacterModel(di.resolve(CharacterRepository)));
+di.register(CharacterModel, new CharacterModel(di.resolve(CharacterRepository), di.resolve(StorageRepository)));
 di.register('RootModel', new RootModel(null, di.resolve(StorageRepository)));
 di.register(BattleModel, new BattleModel(di.resolve(BattleRepository), di.resolve(StorageRepository), di.resolve(BattleInteractor)))
 

@@ -39,6 +39,7 @@ export class BattleFragment extends Fragment {
         container = null;
         container = document.createElement('div');
         container.classList.add('main-container');
+        container.classList.add('battle');
         playerContainer = document.createElement('div');
         playerContainer.classList.add('player-container');
         enemyContainer = document.createElement('div');
@@ -208,11 +209,7 @@ export class BattleFragment extends Fragment {
       }
     }
 
-    
-
     mount() {
-
-     
 
       this.subscriptions.push(
         this.model.player$.subscribe(state => this.updateView(state))
@@ -232,6 +229,6 @@ export class BattleFragment extends Fragment {
     unmount() {
       this.subscriptions.forEach(s => s.unsubscribe());
       this.subscriptions = [];
-      if(this.model.battle.battleLog.length === 0) this.logList.innerHTML = '';
+      if(this.logList && this.model.battle.battleLog.length === 0) this.logList.innerHTML = '';
     }
 }

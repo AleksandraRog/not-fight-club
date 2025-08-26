@@ -20,10 +20,13 @@ export class StartFragment extends Fragment {
 
   async createView() {
     const fragment = document.createDocumentFragment();
+    const container = document.createElement('div');
+    container.classList.add('main-container');
+    container.classList.add('start-container');
     const title = document.createElement('h1');
     title.textContent = 'Create Your Character';
     const labelCharacterNameInput = document.createElement('label');
-    labelCharacterNameInput.textContent = 'Character Name';
+    labelCharacterNameInput.innerHTML = 'Character Name <br></br>';
     const characterNameInput = document.createElement('input');
     characterNameInput.type = 'text';
     characterNameInput.value = this.characterName;
@@ -33,9 +36,10 @@ export class StartFragment extends Fragment {
     const button = document.createElement("button");
     button.textContent = "Create character!";
      
-    fragment.appendChild(title);
-    fragment.appendChild(labelCharacterNameInput);
-    fragment.appendChild(button);
+    container.appendChild(title);
+    container.appendChild(labelCharacterNameInput);
+    container.appendChild(button);
+    fragment.appendChild(container);
 
     const navIntent$ = fromEvent(button, 'click').pipe(map(() => ({type: 'NAVIGATE', path: '/main'})));
     const saveIntent$ = fromEvent(button, 'click').pipe(map(() => ({type: 'SAVE', characterName: this.characterName})));    

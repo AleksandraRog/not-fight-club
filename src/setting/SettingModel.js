@@ -36,18 +36,17 @@ export class SettingModel extends Model{
     }
 
     restoreState() {
-
-    const savedState = this.storageRepository.getItem('rootState', true);
-    if (savedState) {
-      this.state = savedState;
+      const savedState = this.storageRepository.getItem('rootState', true);
+      if (savedState) {
+        this.state = savedState;
+      }
     }
-  }
 
-  saveState(){
-    this.storageRepository.setItem('rootState', this.state, true); 
-  }
+    saveState() {
+      this.storageRepository.setItem('rootState', this.state, true); 
+    }
 
-  clearState() {
-    this.storageRepository.removeItem('rootState', true);
-  }
+    clearState() {
+      this.storageRepository.removeItem('rootState', true);
+    }
 }
