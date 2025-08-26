@@ -18,7 +18,7 @@ export class BattleRepositoryImpl extends BattleRepository {
     
     async getPlayer(){
        const dtoPlayer = await this.apiClient.getItem(localStorageParametrName);     
-       return new mapper.dtoToPlayer(dtoPlayer); 
+       return (dtoPlayer) ? new mapper.dtoToPlayer(dtoPlayer) : null; 
     }
 
     saveBattleResalt(player){

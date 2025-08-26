@@ -18,16 +18,19 @@ export class RootModel extends Model{
         this.clearState();
       } else {
         this.restoreState();
-      }
+      }          
 
       this.intent$.subscribe(action => {
         if (action.type.startsWith("NAVIGATE")) {
+          console.log('int', action);
           this.updateScreen(action); 
           this.saveState();
         }
       });
 
       const currentPath = location.hash.replace("#", "");
+
+      this.getPlayer();
 
       if (!currentPath) {
         this.intent$.next({ type: 'NAVIGATE', path: '/' });
@@ -42,14 +45,19 @@ export class RootModel extends Model{
         case "/":
           try {
             this.state.isLoading = true;
-            const initial = 'ENTER';
-            this.state = { ...this.state, screen: initial, isLoading: false, error: null, };
+            const initial = await this.getPlayer();
+            if (initial) {
+              this.intent$.next({type: 'NAVIGATE', path: '/main'});
+            } else {
+              this.state = { ...this.state, screen: 'Start', isLoading: false, error: null };
+            }
           } catch (e) {
             this.state = { ...this.state, isLoading: false, error: e.message };
           }
           break;
 
         case "/main":
+          console.log('main');
           this.state = { ...this.state, name: 'Main', withHeader: true, withFooter: false, fragment: 'mainFragment' };
           break;
 
@@ -112,6 +120,13 @@ export class RootModel extends Model{
 
     const headerTitle = header.querySelector('.screen-name');
     headerTitle.textContent = state.name;
+  }
+
+  async getPlayer() {
+
+    const player = await this.repository.getPlayer();
+    console.log('player', player);
+    return player;
   }
 
   restoreState() {

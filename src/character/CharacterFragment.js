@@ -1,4 +1,4 @@
-import { fromEvent, map } from "rxjs";
+import { fromEvent, map, merge } from "rxjs";
 import { Fragment } from "../common/Fragment";
 import { createImage } from "../common/utils";
 
@@ -6,7 +6,8 @@ import { createImage } from "../common/utils";
 export class CharacterFragment extends Fragment {
     constructor(fragmentState, model) {
         super(fragmentState, model);
-        this.mainContainer = null;       
+        this.mainContainer = null; 
+        this.avatarContainer = null;      
         
         this.intent$.subscribe(intent => {
           
@@ -61,8 +62,6 @@ export class CharacterFragment extends Fragment {
       winsSpan = document.querySelector('.character-wins'),
       nameSpan = document.querySelector('.character-name'),
       av = this.mainContainer.querySelector('img');
-      console.log('av', state.avatar);
-
       av.src = state.avatar;
       nameSpan.textContent = state.name;
       winsSpan.textContent = `wins: ${state.wins}`;
@@ -70,35 +69,48 @@ export class CharacterFragment extends Fragment {
     }
 
     async createAvatarsContainer(state) {
-      let avContainer = document.querySelector('.avatars-container');
-      
-      if(state.changeClick && !avContainer) {
-        avContainer = document.createElement('div');
-        avContainer.classList.add('avatars-container');
+      if(!state.changeClick) this.avatarContainer.classList.remove('show');
+           
+      if(state.changeClick && !this.avatarContainer) {
+        this.avatarContainer = document.createElement('div');
+        this.avatarContainer.classList.add('avatars-container');
 
       }
       
       if(state.changeClick) {
         let currentAvatar = this.model.character.avatar.slice(-5, -4);
-        avContainer.innerHTML = '';
+        this.avatarContainer.innerHTML = '';
 
-        console.log('cur', currentAvatar);
+        const closeButton = document.createElement('button');
+        this.avatarContainer.appendChild(closeButton);
+        closeButton.textContent = 'cls';
+        const closeIntent$ = fromEvent(closeButton, 'click')
+          .pipe(map(() => ({type: 'CLICK', changeClick: false})));
+            
+        this.subscribe(closeIntent$);
+
+        const wrapper = document.createElement('div');
+        
+
         for(let i = 1; i < 5; i += 1) {
           if(i !== Number(currentAvatar)) {
             const avatar = await createImage(`./assets/avatars/avatar${i}.jpg`);
-            avContainer.appendChild(avatar);
+            wrapper.appendChild(avatar);
             const checkIntent$ = fromEvent(avatar, 'click')
                .pipe(map(() => ({type: 'AVATAR', url: `./assets/avatars/avatar${i}.jpg`}))
             );
+            const updateAvatarIntent$ = fromEvent(avatar, 'click')
+               .pipe(map(() => ({type: 'CLICK', changeClick: true}))
+            );
             
-            this.subscribe(checkIntent$);
+            this.subscribe(merge(checkIntent$, updateAvatarIntent$));
           }
         }
-
-        this.mainContainer.appendChild(avContainer);
-        avContainer.classList.add('show')
+        this.avatarContainer.appendChild(wrapper);
+        this.mainContainer.appendChild(this.avatarContainer);
+        this.avatarContainer.classList.add('show')
       } else {
-        avContainer.remove('show');
+        this.avatarContainer.remove('show');
       }
     
     }
@@ -106,7 +118,6 @@ export class CharacterFragment extends Fragment {
     mount() {
       this.subscriptions.push(
         this.model.character$.subscribe(state => {
-          console.log('frag', state);
           this.updateView(state);
         })
       )
@@ -121,5 +132,7 @@ export class CharacterFragment extends Fragment {
       this.subscriptions = [];
       this.container = null;
       this.model.clearState();
+      this.mainContainer = null; 
+      this.avatarContainer = null;     
     }
 }

@@ -9,7 +9,7 @@ export class SettingRepositoryImpl extends SettingRepository {
     
     async getPlayer() {
         const dtoPlayer = await this.apiClient.getItem(localStorageParametrName);     
-        return new mapper.dtoToPlayer(dtoPlayer);
+        return (dtoPlayer) ? new mapper.dtoToPlayer(dtoPlayer) : null;
     }
 
     savePlayer(player) {

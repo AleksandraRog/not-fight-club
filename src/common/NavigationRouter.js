@@ -40,10 +40,9 @@ export class NavigationRouter {
       if (push) history.pushState({}, "", "#" + path);
     }
 
-    init() {
+    init() {      
       this.rootModel.intent$.subscribe(action => {
         if (action.type.startsWith("NAVIGATE")) {
-
           this.navigate(action.path);
         }
       });

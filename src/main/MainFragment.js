@@ -6,6 +6,7 @@ import { map } from "rxjs/operators";
 export class MainFragment extends Fragment {
     
     async createView(){
+        console.log('main frag');
         const fragment = document.createDocumentFragment();
         let container = document.createElement('div');
         container.classList.add('main-container');

@@ -19,7 +19,6 @@ export class CharacterModel extends Model{
       this.repository.characterChanges$.subscribe(player => {
         this.character = player;
         this.character$.next(player);
-        console.log('mod', player);
         this.saveState();
       });
 

@@ -11,15 +11,13 @@ export class CharacterRepositoryImpl extends CharacterRepository{
         this.characterChanges$ = this.apiClient.changePlayer$.pipe(  
           filter(ev => ev.key === localStorageParametrName),
           map(ev => {
-            console.log('проверочка', ev.value);
-            console.log('пров 2', new mapper.dtoToPlayer(ev.value));
             return new mapper.dtoToPlayer(ev.value)}));
 
     }
 
     async getCharacter(){
         const dtoPlayer = await this.apiClient.getItem(localStorageParametrName);
-        return new mapper.dtoToPlayer(dtoPlayer);
+        return (dtoPlayer) ? new mapper.dtoToPlayer(dtoPlayer) : null;
     }
 
     saveCharacter(player) {

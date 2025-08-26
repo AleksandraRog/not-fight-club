@@ -175,6 +175,44 @@ footer {
   opacity: 0;
 }
 
+.avatars-container {
+
+  width: 50%;
+  height: 50%;
+  opacity: 1;
+  position: absolute;
+  z-index: 999;
+  transition: opacity 20.5s;
+  bottom: 10%;
+  right: 15%;
+  background: #e8e3e3;
+  border-radius: 10px;
+  border: 2px solid rosybrown;
+  padding: 10px;
+  gap: 10px;
+}
+
+.avatars-container .show {
+  opacity: 0;
+}
+
+
+.avatars-container button {
+  display: block;
+  margin: 0 0 auto auto;
+}
+
+.avatars-container * img {
+  display: block;
+  width: 30%;
+  margin: auto;
+}
+
+.avatars-container * {
+  display: flex;
+  margin: auto;
+}
+
 
 .fade-in {
   opacity: 0;

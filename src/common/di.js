@@ -21,6 +21,8 @@ import { BattleModel } from "../battle/BattleModel.js";
 import { BattleRepository } from "../battle/BattleRepository.js";
 import { BattleInteractor } from "../battle/BattleInteractor.js";
 import { BattleRepositoryImpl } from "../battle/BattleRepositoryImpl.js";
+import { RootRepository } from "../root/RootRepository.js";
+import { RootRepositoryImpl } from "../root/RootRepositoryImpl.js";
 
 
 const di = new DIModule();
@@ -33,11 +35,12 @@ di.register(SettingRepository, new SettingRepositoryImpl(di.resolve(LocalStorage
 di.register(StartRepository, new StartRepositoryImpl(di.resolve(LocalStorageClient)));
 di.register(CharacterRepository, new CharacterRepositoryImpl(di.resolve(LocalStorageClient)));
 di.register(BattleRepository, new BattleRepositoryImpl(di.resolve(LocalStorageClient)));
+di.register(RootRepository, new RootRepositoryImpl(di.resolve(LocalStorageClient)));
 
 di.register(SettingModel, new SettingModel(di.resolve(SettingRepository), di.resolve(StorageRepository)));
 di.register(StartModel, new StartModel(di.resolve(StartRepository)));
 di.register(CharacterModel, new CharacterModel(di.resolve(CharacterRepository), di.resolve(StorageRepository)));
-di.register('RootModel', new RootModel(null, di.resolve(StorageRepository)));
+di.register('RootModel', new RootModel(di.resolve(RootRepository), di.resolve(StorageRepository)));
 di.register(BattleModel, new BattleModel(di.resolve(BattleRepository), di.resolve(StorageRepository), di.resolve(BattleInteractor)))
 
 di.register('/setting', new SettingFragment(null, di.resolve(SettingModel)));
