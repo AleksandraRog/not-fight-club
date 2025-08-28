@@ -6,26 +6,27 @@ import { Disposition } from "./Disposition";
 export class BattleInteractor{
 
     createEnemy () {
-        let i = Math.floor(Math.random() * (Object.values(enemies).length + 1)); 
+        let i = Math.floor(Math.random() * Object.values(enemies).length) + 1; 
         const enemy = Object.assign(new Hero(), enemies[i])
         enemy.avatar = `./assets/avatars/avatar${i+4}.jpg`
         return enemy;
     }
 
     createEnemyDisposition(attendee){
-        const attackList = new Set();
+        let attackList = new Set();
         let num;
         do {
            num = Math.floor(Math.random() * Object.values(zones).length) + 1;
            attackList.add(Object.keys(zones).find(k => zones[k].id === num));
         } while (attackList.size < attendee.attCount);
  
-        const defenceList = new Set();
+        let defenceList = new Set();
         do {
             num = Math.floor(Math.random() * Object.values(zones).length) + 1;
             defenceList.add(Object.keys(zones).find(k => zones[k].id === num));
-        } while (defenceList.size < attendee.defenceList);
+        } while (defenceList.size < attendee.defCount);
         const disp = this.updateTypeAttack(new Disposition([... attackList], [... defenceList]));
+        console.log('disp',disp);
         return disp;
     }
 
@@ -66,10 +67,10 @@ export class BattleInteractor{
 
     updateTypeAttack(disposition) {
         
-        let j = Math.floor(Math.random() * 50) + 1; 
+        let j = Math.floor(Math.random() * 5) + 1; 
         let newDis = disposition;
         if(newDis.attackZoneList.length > 0 && j === 1) {
-            newDis.superAttackZoneList.push(newDis.attackZoneList.slice(-1));
+            newDis.superAttackZoneList.push(...newDis.attackZoneList.slice(-1));
             newDis.attackZoneList.pop();
         }
         return  newDis;

@@ -6,8 +6,17 @@ import { createImage, zones } from "../common/utils";
 export class BattleFragment extends Fragment {
     constructor(fragmentState, model) {
         super(fragmentState, model);
-        this.player = null;
-        this.logList = null
+        this.logList = null;
+        this.playerContainer = null;
+        this.enemyContainer = null;
+        this.attackCheckbox = null;
+        this.defenceCheckbox = null;
+        this.dispositionRules = null;
+        this.playerName = null;
+        this.enemyName = null;
+        this.playerBaseScore = null;
+        this.enemyBaseScore = null;
+
 
         this.intent$.subscribe(intent => {
             if (intent.type === 'GAME') {
@@ -26,38 +35,38 @@ export class BattleFragment extends Fragment {
 
 
     async createView() {
+
       document.querySelector('footer').classList.remove('show');
-        if (!this.player) {
-          this.player = await this.model.loadPlayer();
+        if (!this.model.battle) {
+          this.model.getBattle();
         }
-        
         const fragment = document.createDocumentFragment();
-        let playerContainer = null, enemyContainer = null,
-        dispositionContainer = null, dispositionRules = null,
-        attackCheckbox = null, defenceCheckbox = null,
+        let dispositionContainer = null, dispositionRules = null,
         checkboxWrapper = null, attackButton = null,
         container = null;
         container = document.createElement('div');
         container.classList.add('main-container');
         container.classList.add('battle');
-        playerContainer = document.createElement('div');
-        playerContainer.classList.add('player-container');
-        enemyContainer = document.createElement('div');
-        enemyContainer.classList.add('enemy-container');
-        playerContainer.appendChild(await this.createAttendeeView(this.player));
+        this.playerContainer = document.createElement('div');
+        this.playerContainer.classList.add('player-container');
+        this.enemyContainer = document.createElement('div');
+        this.enemyContainer.classList.add('enemy-container');
+        this.playerContainer.appendChild(await this.createAttendeeView({player: true}));
+          //this.model.battle.player));
 
-        enemyContainer.appendChild(await this.createAttendeeView(this.model.battle.enemy));
+        this.enemyContainer.appendChild(await this.createAttendeeView({player: false}));
+          //this.model.battle.enemy));
 
-        dispositionRules = document.createElement('span')
-        dispositionRules.textContent = `Please pick ${this.model.battle.playerAttackZoneCount} Attack zone and ${this.model.battle.playerDefenceZoneCount} Defence zone`;
-        defenceCheckbox = document.createElement('div');
-        defenceCheckbox.classList.add('checkbox-container');
-        defenceCheckbox.classList.add('defence');
-        attackCheckbox = document.createElement('div');
-        attackCheckbox.classList.add('checkbox-container');
-        attackCheckbox.classList.add('attack');
-        defenceCheckbox.appendChild(this.createCheckbox(zones, 'Defence'));
-        attackCheckbox.appendChild(this.createCheckbox(zones, 'Attack'));
+        this.dispositionRules = document.createElement('span')
+   //     dispositionRules.textContent = `Please pick ${this.model.battle.playerAttackZoneCount} Attack zone and ${this.model.battle.playerDefenceZoneCount} Defence zone`;
+        this.defenceCheckbox = document.createElement('div');
+        this.defenceCheckbox.classList.add('checkbox-container');
+        this.defenceCheckbox.classList.add('defence');
+        this.attackCheckbox = document.createElement('div');
+        this.attackCheckbox.classList.add('checkbox-container');
+        this.attackCheckbox.classList.add('attack');
+        this.defenceCheckbox.appendChild(this.createCheckbox(zones, 'Defence'));
+        this.attackCheckbox.appendChild(this.createCheckbox(zones, 'Attack'));
         dispositionContainer = document.createElement('div');
         dispositionContainer.classList.add('disposition-container');
         checkboxWrapper = document.createElement('form');
@@ -81,41 +90,59 @@ export class BattleFragment extends Fragment {
 
         this.subscribe(merge(attackIntent$, checkIntent$));
 
-        dispositionContainer.appendChild(dispositionRules);
-        checkboxWrapper.appendChild(attackCheckbox);
-        checkboxWrapper.appendChild(defenceCheckbox);
+        dispositionContainer.appendChild(this.dispositionRules);
+        checkboxWrapper.appendChild(this.attackCheckbox);
+        checkboxWrapper.appendChild(this.defenceCheckbox);
         dispositionContainer.appendChild(checkboxWrapper);
         dispositionContainer.appendChild(attackButton);
-        container.appendChild(playerContainer);
+        container.appendChild(this.playerContainer);
         container.appendChild(dispositionContainer);
-        container.appendChild(enemyContainer);
+        container.appendChild(this.enemyContainer);
         fragment.appendChild(container);        
         document.querySelector('footer').classList.add('show');
         return fragment;
 
     }
 
+    onCreateView(state){
+        this.dispositionRules.textContent = `Please pick ${state.playerAttackZoneCount} Attack zone and ${state.playerDefenceZoneCount} Defence zone`;
+        this.playerBaseScore.textContent = state.player.health;
+        this.enemyBaseScore.textContent = state.enemy.health;
+        
+        const enemyName = this.enemyContainer.querySelector('h6'),
+        enemyAvatar = this.enemyContainer.querySelector('img');
+        if (enemyAvatar.src !== state.enemy.avatar) enemyAvatar.src = state.enemy.avatar;
+        enemyName.textContent = state.enemy.name;
+
+        this.updateView (state); 
+
+
+    }
+
     async createAttendeeView(attendee){
+      
         const fragment = document.createDocumentFragment();
-        let name = null, avatar = null, scoreLine = null,
-        scoreText = null, baseScore = null, currentScore = null;
-        name = document.createElement('h6');
-        name.textContent = attendee.name;
-        avatar = await createImage(attendee.avatar || '');
+        let avatar = null, scoreLine = null,
+        scoreText = null, currentScore = null;
+        if(attendee.player) {
+          this.playerName = document.createElement('h6');
+          this.playerBaseScore = document.createElement('span');
+          fragment.appendChild(this.playerName);
+        } else {
+          this.enemyName = document.createElement('h6');
+          this.enemyBaseScore = document.createElement('span');
+          fragment.appendChild(this.enemyName);
+        }
+        avatar = await createImage('./assets/avatars/avatar1.jpg');
         scoreLine = document.createElement('div');
         scoreLine.classList.add('score-line');
         scoreText = document.createElement('div');
         currentScore = document.createElement('span');
         currentScore.classList.add('current-score');
-        currentScore.textContent = attendee.health;
+        currentScore.textContent = '';
         scoreText.appendChild(currentScore);
         scoreText.append(' / ');
-        baseScore = document.createElement('span');
-        baseScore.textContent = attendee.health;
-        scoreText.appendChild(baseScore);
-        this.createScore(attendee, scoreLine, currentScore);
-
-        fragment.appendChild(name);
+        scoreText.appendChild(attendee.player ? this.playerBaseScore : this.enemyBaseScore);
         fragment.appendChild(avatar);
         fragment.appendChild(scoreLine);
         fragment.appendChild(scoreText);
@@ -148,18 +175,40 @@ export class BattleFragment extends Fragment {
     }
 
     updateView (state) {
-      const playerContainer = document.querySelector('.player-container'),
-      playerName = playerContainer.querySelector('h6'),
-      playerAvatar = playerContainer.querySelector('img');
+
+      this.updatePlayer(state.player);
+      this.updateCheckbox(state);
+      this.updateScore({ player: true }, state);
+      this.updateScore({ player: false }, state); 
+      this.updateLogs(state.battleLog);
+      this.updateButtonState(state);
+      if(state.finish) this.updateFinish(state);
+    }
+
+    updatePlayer(state) {
+      const playerName = this.playerContainer.querySelector('h6'),
+      playerAvatar = this.playerContainer.querySelector('img');
       if (playerAvatar.src !== state.avatar) playerAvatar.src = state.avatar;
       playerName.textContent = state.name;
     }
 
+    updateCheckbox(state){
+      state.playerDisposition.attackZoneList.forEach(element => {
+        this.attackCheckbox.querySelector(`input[value = "${zones[element].name}"]`).checked = true;
+      });
+      state.playerDisposition.superAttackZoneList.forEach(element => {
+        this.attackCheckbox.querySelector(`input[value = "${zones[element].name}"]`).checked = true;
+      });
+      state.playerDisposition.defenceZoneList.forEach(element => {
+        this.defenceCheckbox.querySelector(`input[value = "${zones[element].name}"]`).checked = true;
+      });
+    }
+
     updateScore (attendee, state) {
-  
+      
       const container = document.querySelector(`.${attendee.player ? 'player-container' : 'enemy-container'}`);   
       const score = attendee.player ? state.playerScore : state.enemyScore;
-      const percent = Math.floor( score / attendee.health * 100);
+      const percent = Math.floor( score /(attendee.player ? state.player.health : state.enemy.health) * 100);
       const progress = container.querySelector('.score-line');  
       progress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${percent}%, #C4C4C4 ${percent}%, #C4C4C4 100%)`;
       const currentScore = container.querySelector('.current-score');
@@ -178,14 +227,17 @@ export class BattleFragment extends Fragment {
       attackButton.disabled = !state.isReady || state.finish;
     }
 
-    updateLogs (state) {
-      
+    updateLogs (state) {      
         this.logList = document.querySelector('.log-list');
         const logCount = this.logList.querySelectorAll('li').length;
 
         for( let i = logCount; i < state.length; i += 1) {
             let logItem = document.createElement('li');
-            logItem.innerHTML = state[i].replace(this.model.player.name, `<strong>${this.model.player.name}</strong>`).replace(this.model.battle.enemy.name, `<strong>${this.model.battle.enemy.name}</strong>`);
+            logItem.innerHTML = state[i]
+            .replace(this.model.battle.player.name,
+              `<strong>${this.model.battle.player.name}</strong>`)
+            .replace(this.model.battle.enemy.name, 
+              `<strong>${this.model.battle.enemy.name}</strong>`);
             this.logList.appendChild(logItem);
         }
     }
@@ -210,25 +262,63 @@ export class BattleFragment extends Fragment {
     }
 
     mount() {
-
+    
+      if(this.model.battle) {
+        this.model.pushOnCreateView();
+      }
       this.subscriptions.push(
-        this.model.player$.subscribe(state => this.updateView(state))
+        this.model.battle$.pipe(filter
+          (state => state.type === 'attack'))
+          .subscribe(state => {
+          this.updateScore({ player: true }, state.battle);
+          this.updateScore({ player: false }, state.battle); 
+          this.updateLogs(state.battle.battleLog);
+          this.updateButtonState(state.battle);
+          if(state.battle.finish) this.updateFinish(state.battle);
+          }
+        )
       );
 
       this.subscriptions.push(
-        this.model.battle$.subscribe(state => {
-          this.updateScore(state.player, state);
-          this.updateScore(state.enemy, state); 
-          this.updateButtonState(state);
-          this.updateLogs(state.battleLog);
-          this.updateFinish(state);
-        })
+        this.model.battle$.pipe(filter
+          (state => state.type === 'restoreState'))
+          .subscribe(state => {
+            this.onCreateView(state.battle);}
+        )
       );
+
+      this.subscriptions.push(
+        this.model.battle$.pipe(filter
+          (state => state.type === 'activeAttackButton'))
+          .subscribe(state => {
+            this.updateButtonState(state.battle)
+          })
+      );
+
+      this.subscriptions.push(
+        this.model.battle$.pipe(filter
+          (state => state.type === 'player'))
+          .subscribe(state => this.updatePlayer(state.battle.player)
+        )
+      );
+
+      this.subscriptions.push(
+        this.model.battle$.pipe(filter
+          (state => state.type === 'startFragment'))
+          .subscribe(state => this.onCreateView(state.battle)
+        )
+      );
+
+
     }
 
     unmount() {
       this.subscriptions.forEach(s => s.unsubscribe());
       this.subscriptions = [];
       if(this.logList && this.model.battle.battleLog.length === 0) this.logList.innerHTML = '';
+      this.playerContainer = null;
+      this.enemyContainer = null;
+      this.attackCheckbox = null;
+      this.defenceCheckbox = null;
     }
 }

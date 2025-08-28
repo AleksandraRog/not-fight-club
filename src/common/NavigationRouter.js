@@ -46,7 +46,7 @@ export class NavigationRouter {
           this.navigate(action.path);
         }
       });
-
+      
       this.rootModel.init();
     }
 

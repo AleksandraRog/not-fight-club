@@ -19,6 +19,7 @@ export class StorageRepositoryImpl extends StorageRepository{
   }
 
   removeItem(key, session = false) {
+    
     const storage = session ? sessionStorage : localStorage;
     storage.removeItem(`${this.namespace}:${key}`);
   }

@@ -27,6 +27,7 @@ export class CharacterFragment extends Fragment {
         this.mainContainer = document.createElement('div');
         let mainContainer = this.mainContainer;
         mainContainer.classList.add('main-container');
+        mainContainer.classList.add('character-container');
 
        const avatarImg = await createImage(this.model.character.avatar || '');
         const clickIntent$ = fromEvent(avatarImg, 'click')
@@ -83,7 +84,7 @@ export class CharacterFragment extends Fragment {
 
         const closeButton = document.createElement('button');
         this.avatarContainer.appendChild(closeButton);
-        closeButton.textContent = 'cls';
+        closeButton.classList.add('close-button');
         const closeIntent$ = fromEvent(closeButton, 'click')
           .pipe(map(() => ({type: 'CLICK', changeClick: false})));
             

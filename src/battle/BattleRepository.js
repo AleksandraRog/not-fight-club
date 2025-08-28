@@ -8,5 +8,9 @@ export class BattleRepository {
     saveBattleResalt(){
         throw new Error("saveBattleResalt() must be implemented in subclass");
     }
+
+    async saveBattle(battle){
+       throw new Error("saveBattleResalt() must be implemented in subclass"); 
+    }
     
 }

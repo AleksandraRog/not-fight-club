@@ -22,7 +22,6 @@ export class RootModel extends Model{
 
       this.intent$.subscribe(action => {
         if (action.type.startsWith("NAVIGATE")) {
-          console.log('int', action);
           this.updateScreen(action); 
           this.saveState();
         }
@@ -57,7 +56,6 @@ export class RootModel extends Model{
           break;
 
         case "/main":
-          console.log('main');
           this.state = { ...this.state, name: 'Main', withHeader: true, withFooter: false, fragment: 'mainFragment' };
           break;
 
@@ -125,7 +123,6 @@ export class RootModel extends Model{
   async getPlayer() {
 
     const player = await this.repository.getPlayer();
-    console.log('player', player);
     return player;
   }
 
