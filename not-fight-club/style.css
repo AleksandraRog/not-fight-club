@@ -84,6 +84,26 @@ footer {
   text-decoration: underline;
 }
 
+.character-container img::after {
+  content: "new av";
+  opacity: 1;
+  bottom: -50%;
+  transform: opacity 0.5s;
+  color: red;
+  z-index: 50;
+  height: 100%;
+
+}
+
+.character-container img {
+  display: block;
+  margin: 0;
+}
+
+.character-container img:hover .character-container img::after{
+   opacity: 1;
+}
+
 .checkbox-container {
   display: flex;
   flex-direction: column;
@@ -108,6 +128,7 @@ footer {
 
 .checkbox-form {
   display: flex;
+  column-gap: 0;
 }
 
 .main-container {
@@ -144,6 +165,8 @@ footer {
  margin: auto 0;
 }
 
+
+
 .disposition-container span {
   text-align: center;
 }
@@ -176,7 +199,7 @@ footer {
 }
 
 .avatars-container {
-
+  box-sizing: content-box;
   width: 50%;
   height: 50%;
   opacity: 1;
@@ -190,6 +213,7 @@ footer {
   border: 2px solid rosybrown;
   padding: 10px;
   gap: 10px;
+  margin: 0;
 }
 
 .avatars-container .show {
@@ -221,6 +245,48 @@ footer {
 
 .fade-in.show {
   opacity: 1;
+}
+
+.main-button {
+  height: 100%;
+  aspect-ratio: 1/1;
+  background-image: url(./assets/images/ic_main.svg);
+  background-repeat: no-repeat;     
+  background-position: center;     
+  background-size: contain;
+  border-radius: 5px;
+}
+
+.setting-button {
+  height: 100%;
+  aspect-ratio: 1/1;
+  background-image: url(./assets/images/ic_setting.svg);
+  background-repeat: no-repeat;     
+  background-position: center;     
+  background-size: contain;
+  border-radius: 5px;
+}
+
+.character-button {
+  height: 100%;
+  aspect-ratio: 1/1;
+  background-image: url(./assets/images/ic_smile.svg);
+  background-repeat: no-repeat;     
+  background-position: center;     
+  background-size: contain;
+  border-radius: 5px;
+}
+
+.close-button {
+  background-image: url(./assets/images/ic_close.svg);
+  background-repeat: no-repeat;     
+  background-position: center;     
+  background-size: contain;
+  padding: 8px;
+  border: 1px;
+  margin: 16px;
+  color: transparent;
+  background-color: transparent;
 }
 
 
